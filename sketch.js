@@ -23,16 +23,25 @@ let pauseCount2 = 0;
 
 const voices = [];
 const grains = [];
+let voiceTracks = Array.from({length: numTracks});
+voiceTracks.forEach((track, i) => {
+    voiceTracks[i] = [];
+});
+// console.log(voiceTracks);
 
 let grainDensity = 50, randomGrains = 50, grainCount = 0;
 
 
 
 // console.log(pauses1, pauses2);
-createSequentialGrain(pauses1, pauseCount1, 0.5);
+createSequentialGrain(pauses1, pauseCount1, 0, 0.5);
 
 
-createSequentialGrain(pauses2, pauseCount2, 2.0);
+createSequentialGrain(pauses2, pauseCount2, 1, 2.0);
+
+createSequentialGrain(pauses1, pauseCount1, 2, 2.0);
+
+createSequentialGrain(pauses2, pauseCount2, 3, 2.0);
 
 
 
@@ -43,7 +52,7 @@ function setup(){
 }
 
 function draw(){
-    
+   
     background(0);
     if(soundFileData){
         soundFileDatas.forEach((soundFileData, i) =>{
@@ -54,34 +63,38 @@ function draw(){
         drawPlaceholders();
     }
 
-
-    if(voices.length  > 0){
-        voices.forEach(voice => {
-            voice.grains.forEach(grain => {
-                grain.checkLife(millis());
-                // console.log(grain.alive);
-                if(grain.alive){
-                    grain.display();
-                } else {
-                    voice.grains.splice(grain.num,1);
-                }    
+    voiceTracks.forEach((track, i) => {
+        if(track.length  > 0){
+            track.forEach((voice) => {
+                voice.grains.forEach(grain => {
+                    grain.checkLife(millis());
+                    // console.log(grain.alive);
+                    if(grain.alive){
+                        grain.display(i);
+                    } else {
+                        voice.grains.splice(grain.num,1);
+                    }    
+                })
             })
-        })
-    }
+        }
+    })
+
 
 }
 
 
 
-function createSequentialGrain(pauseArray, count, rate){
-    if(soundFileData){
-        let v = new Voice(random(200), buffer, attack, release, spread, density);
-        v.addGrain(random(0, width), random(0, height), rate);
-        voices.push(v);
+function createSequentialGrain(pauseArray, count, bufnum, rate){
+    if(soundFileDatas[bufnum]){
+        // console.log(bufnum);
+        let v = new Voice(random(200), bufnum, attack, release, spread, density);
+        v.addGrain(random(50, width-50), random(0, height), rate);
+        voiceTracks[bufnum].push(v);
+        
         count++
     }
     // console.log(pauseArray, count)
-        setTimeout(() => createSequentialGrain(pauseArray, count, rate), pauseArray[count % pauseArray.length])
+        setTimeout(() => createSequentialGrain(pauseArray, count, bufnum, rate), pauseArray[count % pauseArray.length])
 }
 
 
@@ -90,7 +103,7 @@ function createRandomGrain(){
     // grainDensity = Math.floor(Math.random() * randomGrains + grainDensity);
   
     if(soundFileData){
-    let v = new Voice(random(200), buffer, attack, release, spread, density);
+    let v = new Voice(random(200), bufnum, attack, release, spread, density);
     v.addGrain(random(0, width), random(0, height));
     // grainCount++
     voices.push(v);
@@ -101,7 +114,7 @@ function createRandomGrain(){
 
 function mousePressed(){
     grainDensity = Math.floor(Math.random() * randomGrains + grainDensity);
-    let v = new Voice(random(200), buffer, attack, release, spread, density);
+    let v = new Voice(random(200), bufnum, attack, release, spread, density);
     v.addGrain(mouseX, mouseY);
     grainCount++
     voices.push(v);

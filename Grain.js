@@ -1,13 +1,14 @@
 class Grain {
    
-    constructor(num, buffer, positionx, positiony,attack,release,spread, rate){
+    constructor(num, bufnum, positionx, positiony,attack,release,spread, rate){
         // console.log(rate);
        this.num = num;
+       this.bufnum = bufnum;
         this.now = context.currentTime; //update the time value
         //create the source
         this.source = context.createBufferSource();
         this.source.playbackRate.value = this.source.playbackRate.value * rate;
-        this.source.buffer = buffer;
+        this.source.buffer = buffers[bufnum];
         
         //create the gain for enveloping
         this.gain = context.createGain();
@@ -20,7 +21,7 @@ class Grain {
         this.positionx = positionx;
         this.positiony = positiony;
 
-        this.offset = this.positionx * (buffer.duration / CANVASWIDTH); //pixels to seconds
+        this.offset = this.positionx * (buffers[this.bufnum].duration / CANVASWIDTH); //pixels to seconds
         
         //update and calculate the amplitude
         this.amp = this.positiony / CANVASHEIGHT;
@@ -50,12 +51,12 @@ class Grain {
 
 
     checkLife(currentTime){
-        console.log(currentTime);
+        // console.log(currentTime);
         const timeElapsed = currentTime - this.timeBorn;
-        console.log(timeElapsed, this.lifespan);
+        // console.log(timeElapsed, this.lifespan);
         const val = 10;
         if(timeElapsed > this.lifespan){
-            console.log('should return true');
+            // console.log('should return true');
             this.alive = false;
         }
         
@@ -69,16 +70,16 @@ class Grain {
         	//drawing the lines
 	stroke(random(125) + 125, random(250), random(250)); //,(this.amp + 0.8) * 255
 	// p.strokeWeight(this.amp * 5);
-	this.randomoffsetinpixels = this.randomoffset / (buffer.duration / CANVASWIDTH);
+	this.randomoffsetinpixels = this.randomoffset / (buffers[this.bufnum].duration / CANVASWIDTH);
 	//p.background();
-	line(this.positionx + this.randomoffsetinpixels, 0,this.positionx + this.randomoffsetinpixels, CANVASHEIGHT);
+	line(this.positionx + this.randomoffsetinpixels, TRACKHEIGHT * this.bufnum , this.positionx + this.randomoffsetinpixels, TRACKHEIGHT * this.bufnum + TRACKHEIGHT);
 
     }
 
 
     play(){
         const dur = this.attack + this.release;
-        console.log(dur);
+        // console.log(dur);
         this.source.start(this.now, this.offset + this.randomoffset, dur); //parameters (when,offset,duration)
         // this.source.start();
         

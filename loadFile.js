@@ -1,8 +1,8 @@
 const drop = document.querySelector('#drop');
-let buffer;
+let buffers = [];
 let soundFileData;
 let soundFileDatas = [];
-let nextTrackNumber = 0;
+let numBuffers = 0;
 
 //init web audio context
 window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext;
@@ -26,13 +26,15 @@ drop.addEventListener("dragover",function(e){
             let array = e.target.result;
             context.decodeAudioData(array,function(b){
                 
-                buffer = b;
-                console.log(buffer);
+                buffers[numBuffers] = b;
+                console.log(buffers[numBuffers]);
                 console.log(b);
-                soundFileData = buffer.getChannelData(0);
+                soundFileData = buffers[numBuffers].getChannelData(0);
                 if(soundFileDatas.length < numTracks){
                     soundFileDatas.push(soundFileData)
+                    numBuffers++
                 }
+                
                 
     
             },function(){

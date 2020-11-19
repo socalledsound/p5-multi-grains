@@ -1,8 +1,10 @@
 
 class Voice {
-    constructor(id, buffer, attack, release, spread, density){
+    constructor(id, bufnum, attack, release, spread, density){
+        // console.log(id, bufnum, attack);
         this.touchid = id; //the id of the touch event 
         this.grains = [];
+        this.bufnum = bufnum;
         this.grainCount = 0;
         this.dens = map(density,1,0,0,1);
         this.interval = (this.dens * 500) + 70;
@@ -13,7 +15,7 @@ class Voice {
 
     addGrain(currentMouseX, currentMouseY, rate){
         // console.log(rate);
-        const g = new Grain(grainCount, buffer, currentMouseX, currentMouseY, attack, release, spread, rate);
+        const g = new Grain(grainCount, this.bufnum, currentMouseX, currentMouseY, attack, release, spread, rate);
         this.grains[grainCount] = g;
         this.grainCount+=1;
         this.playGrain(g);
