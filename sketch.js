@@ -1,6 +1,6 @@
 const CANVASWIDTH = 1000;
 const CANVASHEIGHT = 800;
-const numTracks = 4;
+const numTracks = 8;
 const tracks = Array.from({length: numTracks});
 const TRACKHEIGHT = CANVASHEIGHT/numTracks;
 
